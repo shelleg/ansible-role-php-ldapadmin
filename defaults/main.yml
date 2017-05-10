@@ -1,0 +1,10 @@
+---
+php_ldapadmin_version: 1.2.3-5.el7
+
+openldap_domain_name: domain.local
+openldap_domain_prefix: "{{ openldap_domain_name.split('.')[0] }}"
+openldap_domain_suffix: "{{ openldap_domain_name.split('.')[1] }}"
+openldap_admin_username: admin
+openldap_admin_passowrd: Chang3m3
+
+portainer_mode: single

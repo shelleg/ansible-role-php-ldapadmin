@@ -1,0 +1,6 @@
+---
+- name: "01 :: Install php-ldapadmin"
+  include: "install.yml"
+
+- name: "021 :: Configure php-ldapadmin"
+  include: "configure.yml"  

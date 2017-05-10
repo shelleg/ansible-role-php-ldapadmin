@@ -1,0 +1,32 @@
+---
+- name: "install deps"
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+    - "{{ php_ldapadmin_deps }}"
+  when: (php_ldapadmin_deps is defined)
+
+- name: "Set proxy in yum.conf"
+  lineinfile:
+    dest: /etc/yum.conf
+    state: present
+    regexp: '^proxy='
+    line: 'proxy=http://{{ cj_proxy_host }}:{{ cj_proxy_port }}'
+  when: (php_ldapadmin_set_proxy is defined) and (php_ldapadmin_set_proxy | bool)
+
+- name: "Install our specific version of PHP Ldap Admin"
+  package:
+    name: phpldapadmin-{{ php_ldapadmin_version }}
+    state: installed
+
+# - name: "phpldapadmin package installed !?"
+#   package:
+#     name: phpldapadmin
+#     state: present
+#   register: php_ldapadmin__pkg_installed
+
+- name: "Flush iptables"
+  command: >
+    iptables -F
+  ignore_errors: true

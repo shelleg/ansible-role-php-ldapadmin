@@ -1,0 +1,9 @@
+---
+- name: "wait for httpd http listen port"
+  uri:
+    url: "http://localhost/ldapadmin"
+    status_code: 200
+  register: login_page
+  until: login_page.status == 200
+  retries: 5
+  delay: 3

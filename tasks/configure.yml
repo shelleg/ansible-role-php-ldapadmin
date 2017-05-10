@@ -1,0 +1,60 @@
+---
+- name: "Handle root DN"
+  replace:
+    dest: /etc/phpldapadmin/config.php
+    regexp: '^\/\/ \$servers->setValue\(''server'',''base'',array\(''''\)\);'
+    replace: "$servers->setValue('server','base',array('dc={{ openldap_domain_prefix }},dc={{ openldap_domain_suffix }}'));"
+
+    # // $servers->setValue('server','base',array(''));
+
+- name: "Handle template warnings"
+  replace:
+    dest: /etc/phpldapadmin/config.php
+    regexp: '^\/\/ \$config->custom->appearance\[''hide_template_warning''\] \= false;'
+    replace:  "$config->custom->appearance['hide_template_warning'] = true;"
+
+    #// $config->custom->appearance['hide_template_warning'] = false;
+
+- name: "Handle admin user login"
+  replace:
+    dest: /etc/phpldapadmin/config.php
+    regexp: '^\#  \$servers->setValue\(''login'',''bind_id'',''cn=Manager,dc=example,dc=com''\);'
+    replace:  "$servers->setValue('login','bind_id','cn={{ openldap_admin_username }},dc={{ openldap_domain_prefix }},dc={{ openldap_domain_suffix }}');"
+
+    ##  $servers->setValue('login','bind_id','cn=Manager,dc=example,dc=com');
+
+- name: "Uncomment login by dn"
+  replace:
+    dest: /etc/phpldapadmin/config.php
+    regexp: '^\/\/ \$servers->setValue\(''login'',''attr'',''dn''\);'
+    replace:  "$servers->setValue('login','attr','dn');"
+
+    #   // $servers->setValue('login','attr','dn');
+
+- name: "Comment login by uid"
+  replace:
+    dest: /etc/phpldapadmin/config.php
+    regexp: '^\$servers->setValue\(''login'',''attr'',''uid''\);'
+    replace:  "//$servers->setValue('login','attr','uid');"
+
+    #   $servers->setValue('login','attr','uid');
+
+- name: "Comment Require local"
+  replace:
+    dest: /etc/httpd/conf.d/phpldapadmin.conf
+    regexp: '    Require local'
+    replace:  "    #Require local"
+
+- name: "Add Require all granted"
+  lineinfile:
+    dest: /etc/httpd/conf.d/phpldapadmin.conf
+    insertafter: '    #Require local'
+    state: present
+    line:  "    Require all granted"
+
+- name: "restart httpd"
+  service:
+    name: httpd
+    state: restarted
+   # Reference: http://stackoverflow.com/a/31618968/1851299
+  notify: "wait for httpd http listen port"
