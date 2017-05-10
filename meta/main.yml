@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: Doron Shai
+  description: role to install PHP ldapadmin
+  company: Tikal Knowledge
+  license:
+    - MIT
+  min_ansible_version: 2.0
+  platforms:
+    - name: EL
+      versions:
+        - 7
+  galaxy_tags:
+    - development
+    - continuous-integration
+
+dependencies: []
